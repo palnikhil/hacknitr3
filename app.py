@@ -116,7 +116,7 @@ def rewards():
 
 @app.route("/dashboard")
 def dashboard():
-     # try:
+     try:
         session['usr']
         all_users = db.child("users").get()
         for user in all_users.each():
@@ -152,11 +152,13 @@ def dashboard():
                                 goal=present_day_goal,dailyGoal=goalmeter,graph_data_pushups=graph_data_pushups,graph_data_squats=graph_data_squats,
                                 graph_data_footsteps=graph_data_footsteps,graph_data_jumps=graph_data_jumps,graph_data_calories=graph_data_calories)
         else:
-         goalmeter=str(GoalCalc(user_ID))
+         present_day_goal=db.child("users").child(user_id).child("profile").child("present_day_goal").get().val()
+         present_day_goal=int(present_day_goal)
+         goalmeter=str(GoalCalc(user_ID,present_day_goal))
          return render_template("dashboard.html",name=user_name,reward=reward_selected,age=user_age,bmi=user_bmi,health_status=user_health_status,
                                  message="No Records Found",dailyGoal=goalmeter)
-    #   except:
-    #       return redirect("/authentication")
+      except:
+          return redirect("/authentication")
 
 @app.route("/")
 def main():
